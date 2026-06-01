@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Buku Kenangan Digital</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&family=Poppins:wght@300;400;600&family=Playfair+Display:wght@700&display=swap');
+        
+        body, html {
+            margin: 0; padding: 0;
+            width: 100%; height: 100%;
+            background-color: #0f172a; /* Warna background luar buku */
+            overflow: hidden;
+            font-family: 'Poppins', sans-serif;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            perspective: 2500px; /* Memberikan efek 3D */
+        }
+
+        .font-cursive { font-family: 'Dancing Script', cursive; }
+        .font-serif { font-family: 'Playfair Display', serif; }
+
+        .book {
+            position: relative;
+            width: 90vw;
+            height: 85vh;
+            max-width: 1000px;
+            max-height: 700px;
+            transform-style: preserve-3d;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .sheet {
+            position: absolute;
+            width: 50%;
+            height: 100%;
+            right: 0;
+            top: 0;
+            transform-origin: left;
+            transform-style: preserve-3d;
+            transition: transform 1.2s cubic-bezier(0.645, 0.045, 0.355, 1);
+            z-index: var(--z);
+            cursor: pointer;
+        }
+
+        .sheet.flipped {
+            transform: rotateY(-180deg);
+            z-index: var(--flipped-z);
+        }
+
+        .page-face {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            backface-visibility: hidden;
+            display: flex;
+            flex-direction: column;
+            padding: 2rem;
+            box-shadow: inset 0 0 50px rgba(0,0,0,0.1), 0 0 10px rgba(0,0,0,0.3);
+            background: white;
+            border-radius: 0 15px 15px 0;
+            overflow: hidden;
+        }
+
+        /* Halaman Belakang (Kiri setelah dibalik) */
+        .page-back {
+            transform: rotateY(180deg);
+            border-radius: 15px 0 0 15px;
+            background: #fdfdfd;
+        }
+
+        /* Desain Sampul */
+        .cover-front {
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+            color: white;
+            border-left: 10px solid #020617; /* Tulang Buku */
+        }
+
+        .cover-image-bg {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            opacity: 0.6; /* Transparansi foto sampul */
+            z-index: 0;
+        }
+
+        .cover-content {
+            position: relative;
+            z-index: 10;
+            text-shadow: 0 4px 12px rgba(0,0,0,0.8);
+        }
+
+        /* Frame Foto Polarodi */
+        .photo-frame {
+            width: 100%;
+            height: 70%;
+            background: #eee;
+            border: 10px solid white;
+            border-bottom: 30px solid white;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+        }
+
+        .photo-frame img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- AUDIO MUSIK LATAR -->
+    <!-- Ganti src dengan link lagu To The Bone. Pastikan formatnya .mp3 atau .m4a -->
+    <audio id="bgMusic" loop preload="auto">
+        <source src="lagu.mp3" type="audio/mpeg">
+    </audio>
+
+    <div id="book" class="book">
+        
+        <!-- LEMBAR 1: SAMPUL & KATA PENGANTAR -->
+        <div class="sheet" style="--z: 6; --flipped-z: 1;">
+            <div class="page-face cover-front flex flex-col items-center justify-center text-center">
+                <!-- FOTO SAMPUL (Opsional): Ganti src di bawah dengan link foto -->
+                <img src="sampul.jpg" alt="soft blurred cover background with warm tones behind birthday message layout" class="cover-image-bg">
+                
+                <div class="cover-content">
+                    <h1 class="text-6xl font-serif mb-4 tracking-tighter uppercase"></h1>
+                    <div class="w-24 h-1 bg-white/50 mx-auto mb-6"></div>
+                    <p class="text-sm uppercase tracking-widest opacity-90">klik yee</p>
+                </div>
+                <div class="absolute bottom-10 animate-pulse text-xs z-10">✨</div>
+            </div>
+
+            <!-- Bagian Dalam Sampul (Halaman Kiri 1) -->
+            <div class="page-face page-back flex flex-col justify-center">
+                <h2 class="text-3xl font-serif text-sky-800 mb-4">gugu gaga!</h2>
+                <div class="overflow-y-auto pr-2 text-gray-700 leading-relaxed text-sm">
+                    <p class="mb-4 italic">"selamat ulang tahun yeah cinta!"</p>
+                    <p>about you, yah lagu ini mengingatkanku padamu disetiap liriknya. ntahlah, kenapa setiap dengar lagu ini selalu ada kamu di fikiranku.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- LEMBAR 2: FOTO & CERITA 1 -->
+        <div class="sheet" style="--z: 5; --flipped-z: 2;">
+            <!-- Halaman Kanan 1 (Foto) -->
+            <div class="page-face">
+                <div class="photo-frame">
+                    <!-- GANTI FOTO 1 DI SINI -->
+                    <img src="foto1.jpg" alt="person with long dark hair and pink hair ribbons in a softly lit memory snapshot with warm affectionate tone">
+                </div>
+                <p class="mt-4 font-cursive text-2xl text-center text-gray-500">cantik benerrr</p>
+            </div>
+            <!-- Halaman Kiri 2 (Teks) -->
+            <div class="page-face page-back flex flex-col justify-center">
+                <h2 class="text-3xl font-serif text-sky-800 mb-4">First of all</h2>
+                <!-- TULIS CERITAMU DI SINI -->
+                <p class="text-gray-700 leading-relaxed text-sm">
+                    huhh, inget gak kita awal kenalanya dimana? wkwkw dari aku yang chat duluan langsung ngejak mabar epep!! dengan emote tengkorak wkwkwk. terus awal gajadi mabar gara gara kamu badmood. tapi yadah dehh, kamu main epep karena kamu kangen main epepp. huhh dari begituuu sampek bahas saham, ekonomi terus kita deket dehh. memang sih kita gak pacaran, tapi kek orang pacaran, disitu aku anggep kmu udah kayak pacar sendiri lohya. aku masih simpan chat kita dari awal kenalan ahhahaha, tiap malem capek pulang kerja gituu atau lagi duduk duduk di tepi pantai yang sering kamu dudukin, aku baca chat kitaa. aku jugaa simpen utuh fotomuu yaa sama kayak dulu, aku lihatin buat nemenin hari hari kuu. itu aja singkat nya yee kebanyakan gak kuat wwkkw
+                </p>
+            </div>
+        </div>
+
+        <!-- LEMBAR 3: FOTO & CERITA 2 -->
+        <div class="sheet" style="--z: 4; --flipped-z: 3;">
+            <!-- Halaman Kanan 2 (Foto) -->
+            <div class="page-face">
+                <div class="photo-frame">
+                    <!-- GANTI FOTO 2 DI SINI -->
+                    <img src="foto2.jpg" alt="memory photo of a person in a casual setting with a relaxed mood and caption asiknyaa">
+                </div>
+                <p class="mt-4 font-cursive text-2xl text-center text-gray-500">asiknyaa 💖</p>
+            </div>
+            <!-- Halaman Kiri 3 (Teks) -->
+            <div class="page-face page-back flex flex-col justify-center">
+                <h2 class="text-3xl font-serif text-sky-800 mb-4">cerita yang bersambung</h2>
+                <!-- TULIS CERITAMU DI SINI -->
+                <p class="text-gray-700 leading-relaxed text-sm">
+                    maaf yah aku naif, aku minta maaf di september 23 2025 aku ninggalin kamu. aku ngelakuin itu karena aku takut kamu nge stuck denganku, aku saat itu bener bener hampir nyerah buat usaha lagi, karena bankrut di 18 april. masih inget kan? yang dulu punya karyawan sampek pailid hahaha, tapii yasudahlah.
+                    aku mulai saat itu aku mulai memikirkan, kalo tika gak sama aku, apakah dia gapapa? keknya bisa deh lebih sabar lagi, kalo dia sama cowo lain terus salah pergaulan gimana? terus kalo dia nyerah gak ada yang ngajari gimana? aku siapin semuanya buat kamu, aku buatin kamu chanel, ai, aku kasih gmail pribadiku yang bahkan itu gmail kesambung sama bank aku nyimpen duit!!.
+                    intinyaa, aku ninggalin kamu karena diriku yang lagi bingung, aku gamau kamu susah denganku, aku gamau kamu nge stuck denganku, aku gamau kamu gak bahagia sama aku. tapi karena keputusan itu, jujur aku sedih banget harus kangen kamu, aku gatahan buat hubungin kamuu, tapi cukup.
+                    sekarang aku udah kerja di lingkungan yang baik orangnyaa, dengan gaji umk sidoarjo wkwkw. yah meskipun umk, bersyukur aja dehh. aku dibagian picker, grade 3 loh! aku langsung naik ke picker tanpa perlu setahun kerja.
+                    akuu sekarang udah ikhlas, udah bisa merelakan kamu. tapi kalo cinta masihh, masih kok tapii enggak dehh. kamu kejarlah dulu universitas impian kamu yang kamu ceritain saat itu ke aku. tapii meskipun nggak dapet, gamasalah kokk aku selalu yang jadi pertama yang tepuk tangan huhh!! selalu akuu itu ngawasin kamu wkwkw, aku selaluu awasin kamu.
+                    
+                </p>
+            </div>
+        </div>
+
+        <!-- LEMBAR 4: FOTO & CERITA 3 -->
+        <div class="sheet" style="--z: 3; --flipped-z: 4;">
+            <div class="page-face">
+                <div class="photo-frame">
+                    <!-- GANTI FOTO 3 DI SINI -->
+                    <img src="foto3.jpeg" alt="keepsake photo on a storybook page conveying togetherness with caption always together">
+                </div>
+                <p class="mt-4 font-cursive text-2xl text-center text-gray-500">Always Together 🔒</p>
+            </div>
+            <div class="page-face page-back flex flex-col justify-center">
+                <h2 class="text-3xl font-serif text-sky-800 mb-4">Doa & Harapan</h2>
+                <!-- TULIS CERITAMU DI SINI -->
+                <p class="text-gray-700 leading-relaxed text-sm">
+                    diusia kamu saat ini yah, aku ucapin. selamat ulang tahun yaaa, maap telat ngirimnya, sibuk man wkwkwk. tapii nantii, tahun depan insyaallah aku ehemmm. ada dehhhh, gakkk gausah mikir yang aneh aneh, kalo udah kuliah bikin o story biar aku tahu. nantii ehem, kamu inget gak janjiku dulu apaa?? yah itu..
+                    semoga panjang umur, sehat selalu, semangat teruss, rezekinya lancarr, nikahnya sama akuu ehem. candaa wkwkk
+                    sementara ini dulu yahhh dari aku, semoga kita bisa ketemu di suatu kebetulann. ehh btw aku sering duduk2 ditempat kamu duduk duduk wkwkw, ademm dan agak sedikit galau keinget kamuu wwkwkw. tapi ahhh ayokk kita berjuang untuk diri sendiri aja duluu sampek mantep lah intinyaa.
+                    dengerin yaa pesan suaraku nantii, see yaa tikaaa!
+                </p>
+            </div>
+        </div>
+
+        <!--  -->
+        <div class="sheet" style="--z: 2; --flipped-z: 5;">
+            <!--  -->
+            <div class="page-face flex flex-col items-center justify-center text-center">
+                <h2 class="text-3xl font-serif text-pink-600 mb-8">Pesan Suara 🎙️</h2>
+                
+                <div class="space-y-4 w-full px-6">
+                    <div class="text-sm text-gray-500 mb-4 italic">"dengerin oi"</div>
+                    
+                    <!-- PEMUTAR AUDIO UCAPAN -->
+                    <!-- Simpan rekaman suaramu di folder github (misal: ucapan.mp3), lalu ganti src di bawah -->
+                    <audio controls class="mx-auto w-full shadow-lg rounded-full">
+                        <source src="ucapan_dari_kamu.mp3" type="audio/mpeg">
+                        Browser kamu tidak mendukung pemutar suara.
+                    </audio>
+                </div>
+            </div>
+            
+            <!--  -->
+            <div class="page-face page-back bg-slate-900 text-white flex flex-col items-center justify-center">
+                <h1 class="text-5xl font-cursive mb-2 text-pink-400">Happy Birthday!</h1>
+                <p class="mt-4 opacity-70 italic font-serif">"to the bone"</p>
+                <button onclick="resetBook(event)" class="mt-12 text-sm border border-white/30 hover:bg-white/10 transition px-6 py-2 rounded-full">Tutup Buku</button>
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        const sheets = document.querySelectorAll('.sheet');
+        let musicStarted = false;
+        const bgMusic = document.getElementById('bgMusic');
+
+        // Mengatur volume lagu agar tidak terlalu keras
+        bgMusic.volume = 0.5;
+
+        sheets.forEach((sheet, index) => {
+            sheet.addEventListener('click', function(e) {
+                // Cegah buku membalik jika tombol/audio diklik
+                if (e.target.tagName === 'BUTTON' || e.target.tagName === 'AUDIO') return;
+
+                // Mulai mainkan lagu pada interaksi pertama (kebijakan browser)
+                if(!musicStarted) {
+                    bgMusic.play().then(() => {
+                        musicStarted = true;
+                    }).catch(err => {
+                        console.log("Autoplay ditolak oleh browser", err);
+                    });
+                }
+
+                this.classList.toggle('flipped');
+                
+                // Menyalakan Confetti ketika mencapai halaman terakhir
+                if (index === sheets.length - 1 && this.classList.contains('flipped')) {
+                    setTimeout(triggerConfetti, 400); // delay sedikit agar pas dengan animasi
+                }
+            });
+        });
+
+        // Fungsi mengulang buku dari awal
+        function resetBook(e) {
+            e.stopPropagation(); // Cegah halaman membalik sendiri saat klik tombol tutup
+            sheets.forEach(s => s.classList.remove('flipped'));
+            setTimeout(() => {
+                bgMusic.currentTime = 0; // Ulangi lagu dari awal
+            }, 500);
+        }
+
+        // Fungsi perayaan confetti
+        function triggerConfetti() {
+            var duration = 3 * 1000;
+            var animationEnd = Date.now() + duration;
+            var defaults = { startVelocity: 30, spread: 360, ticks: 60, zIndex: 0 };
+
+            function randomInRange(min, max) {
+                return Math.random() * (max - min) + min;
+            }
+
+            var interval = setInterval(function() {
+                var timeLeft = animationEnd - Date.now();
+
+                if (timeLeft <= 0) {
+                    return clearInterval(interval);
+                }
+
+                var particleCount = 50 * (timeLeft / duration);
+                confetti(Object.assign({}, defaults, { particleCount,
+                    origin: { x: randomInRange(0.1, 0.3), y: Math.random() - 0.2 }
+                }));
+                confetti(Object.assign({}, defaults, { particleCount,
+                    origin: { x: randomInRange(0.7, 0.9), y: Math.random() - 0.2 }
+                }));
+            }, 250);
+        }
+    </script>
+</body>
+</html>
